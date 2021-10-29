@@ -5,8 +5,9 @@ readonly T_RESPONSE='Index of'
 readonly SCHEME='http'
 readonly PORT=80
 readonly SCAN_W=1500
-readonly SCAN_COUNT=10000
+readonly SCAN_COUNT=100000
 readonly CHECK_W=32
+readonly EXTENSIONS='jpg,png,gif,jpeg'
 
 log() { echo $(date +%H:%M:%S) "$@" 1>&2; }
 
@@ -21,17 +22,21 @@ http_open() {
 
 check() {
     local ip="$1"
-    curl -sA 'Mozilla/5.0' "${SCHEME}://${ip}${T_PATH}" \
+    curl -sm 5 -A 'Mozilla/5.0' "${SCHEME}://${ip}${T_PATH}" \
         | fgrep "${T_RESPONSE}" >/dev/null
 }
 
 download() {
     local ip="$1"
     wget -q -e robots=off -r -np -nd \
-        -A jpg,png,gif,jpeg -P "out/$ip/" "${SCHEME}://${ip}${T_PATH}"
+        -A "${EXTENSIONS}" -P "out/$ip/" "${SCHEME}://${ip}${T_PATH}"
 }
 
 export -f check
 export -f download
+export SCHEME
+export T_PATH
+export T_RESPONSE
+export EXTENSIONS
 
-http_open | xargs -P $CHECK_W -I {} bash -c 'check && echo {} && download'
+http_open | xargs -P $CHECK_W -I {} bash -c 'check {} && echo {} && download {}'
