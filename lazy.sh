@@ -16,12 +16,8 @@ function download() {
 
 function check() {
     local ip="$1"
-    curl -s -A 'Mozilla/5.0' \
-        --connect-timeout 1 \
-        --max-time 5 \
-        --max-filesize 20K \
-        --tcp-nodelay \
-        "http://$ip$DIR" \
+    curl -s -A 'Mozilla/5.0' --url "http://$ip$DIR" \
+        --connect-timeout 1 --max-time 5 --max-filesize 20K --tcp-nodelay \
         | fgrep 'Index of' > /dev/null
 }
 
