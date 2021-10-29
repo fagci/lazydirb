@@ -4,18 +4,14 @@ DIR='/wp-content/uploads/'
 
 BL_IPS='10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,224-255.-.-.-'
 
-function gen() {
-    nmap -n -iR 1000000 -sL --exclude $BL_IPS \
-        | awk '/report for/ {print $NF}'
+function ip_gen() {
+    nmap -n -iR 1000000 -sL --exclude $BL_IPS | awk '/report for/ {print $NF}'
 }
 
-function dl() {
+function download() {
     local ip="$1"
-    wget -q -e robots=off -r \
-        -np -nd \
-        -Ajpg,png,gif,jpeg \
-        -P "out/$ip/" \
-        "http://$ip$DIR"
+    wget -q -e robots=off -r -np -nd \
+        -Ajpg,png,gif,jpeg -P "out/$ip/" "http://$ip$DIR"
 }
 
 function check() {
@@ -30,6 +26,6 @@ function check() {
 }
 
 export -f check
-export -f dl
+export -f download
 
-gen | xargs -P 1024 -I {} bash -c 'check {} && echo {} && dl {}'
+ip_gen | xargs -P 1024 -I {} bash -c 'check {} && echo {} && download {}'
