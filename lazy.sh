@@ -8,17 +8,17 @@ function ip_gen() {
     nmap -n -iR 1000000 -sL --exclude $BL_IPS | awk '/report for/ {print $NF}'
 }
 
-function download() {
-    local ip="$1"
-    wget -q -e robots=off -r -np -nd \
-        -Ajpg,png,gif,jpeg -P "out/$ip/" "http://$ip$DIR"
-}
-
 function check() {
     local ip="$1"
     curl -s -A 'Mozilla/5.0' --url "http://$ip$DIR" \
         --connect-timeout 1 --max-time 5 --max-filesize 20K --tcp-nodelay \
         | fgrep 'Index of' > /dev/null
+}
+
+function download() {
+    local ip="$1"
+    wget -q -e robots=off -r -np -nd \
+        -Ajpg,png,gif,jpeg -P "out/$ip/" "http://$ip$DIR"
 }
 
 export -f check
