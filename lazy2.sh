@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
+readonly EXTENSIONS='jpg,png,gif,jpeg'
 readonly T_PATH='/wp-content/uploads/'
 readonly T_RESPONSE='Index of'
 readonly SCHEME='http'
 readonly PORT=80
 readonly SCAN_W=1500
-readonly SCAN_COUNT=100000
 readonly CHECK_W=32
-readonly EXTENSIONS='jpg,png,gif,jpeg'
+readonly SCAN_COUNT=100000
 
 log() { echo $(date +%H:%M:%S) "$@" 1>&2; }
 
@@ -32,11 +32,7 @@ download() {
         -A "${EXTENSIONS}" -P "out/$ip/" "${SCHEME}://${ip}${T_PATH}"
 }
 
-export -f check
-export -f download
-export SCHEME
-export T_PATH
-export T_RESPONSE
-export EXTENSIONS
+export -f check download
+export SCHEME T_PATH T_RESPONSE EXTENSIONS
 
 http_open | xargs -P $CHECK_W -I {} bash -c 'check {} && echo {} && download {}'
