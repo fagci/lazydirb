@@ -11,10 +11,10 @@ readonly SCAN_COUNT=1000000
 
 log() { echo $(date +%H:%M:%S) "$@" 1>&2; }
 
-http_open() {
+get_webservers() {
     log 'Start'
     nmap -n -Pn -T4 -iR $SCAN_COUNT -p $PORT \
-        --host-timeout 1s --min-rate $SCAN_W --max-retries 1 \
+        --host-timeout 1s --min-parallelism $SCAN_W --min-rate $SCAN_W --max-retries 1 \
         --open -oG - 2>/dev/null \
         | awk '/\/open\//{print $2}'
     log 'Got ips'
@@ -35,4 +35,4 @@ download() {
 export -f check download
 export SCHEME T_PATH T_RESPONSE EXTENSIONS
 
-http_open | xargs -P $CHECK_W -I {} bash -c 'check {} && echo {} && download {}'
+get_webservers | xargs -P $CHECK_W -I {} bash -c 'check {} && echo {} && download {}'
