@@ -7,7 +7,7 @@ readonly SCHEME='http'
 readonly PORT=80
 readonly SCAN_W=1500
 readonly CHECK_W=32
-readonly SCAN_COUNT=100000
+readonly SCAN_COUNT=1000000
 
 log() { echo $(date +%H:%M:%S) "$@" 1>&2; }
 
