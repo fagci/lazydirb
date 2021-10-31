@@ -3,7 +3,7 @@
 readonly DIR='/wp-content/uploads/'
 
 ip_gen() {
-    nmap -n -iR 1000000 -sL --exclude "${BL_IPS}" | awk '/report for/ {print $NF}'
+    nmap -n -iR 1000000 -sL | awk '/report for/ {print $NF}'
 }
 
 check() {
