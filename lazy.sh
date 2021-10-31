@@ -13,7 +13,7 @@ export SCHEME PORT EXTENSIONS wg
 
 
 random_sites() {
-    nmap -T5 --min-parallelism $SCAN_WORKERS \
+    nmap -T5 --min-parallelism $SCAN_WORKERS --max-retries 1 \
         -n -Pn -iR 0 -p $PORT --open -oG - 2>/dev/null \
         | awk '/open/{print $2}'
 }
