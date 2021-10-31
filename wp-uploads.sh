@@ -8,7 +8,7 @@ source ./lib/tools.sh
 process() {
     local ip="$1"
     local uri="http://${ip}:80/wp-content/uploads/"
-    local out_path="out/$ip/"
+    local out_path="out/wp/$ip/"
 
     has_index "$uri" \
         && echo "$ip" \
