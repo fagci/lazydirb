@@ -21,15 +21,14 @@ get_webservers() {
 }
 
 check() {
-    local ip="$1"
-    curl -sm 5 -A 'Mozilla/5.0' "${SCHEME}://${ip}${T_PATH}" \
+    local uri="${SCHEME}://${1}${T_PATH}"
+    curl -sm 5 -A 'Mozilla/5.0' "$uri" \
         | fgrep "${T_RESPONSE}" >/dev/null
 }
 
 download() {
-    local ip="$1"
-    wget -q -e robots=off -r -np -nd \
-        -A "${EXTENSIONS}" -P "out/$ip/" "${SCHEME}://${ip}${T_PATH}"
+    local uri="${SCHEME}://${1}${T_PATH}"
+    wget -q -e robots=off -r -np -nd -A "${EXTENSIONS}" -P "out/$ip/" "$uri"
 }
 
 export -f check download
