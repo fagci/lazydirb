@@ -1,1 +1,1 @@
-# lazydirb
+# Netrandom framework
