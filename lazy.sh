@@ -19,7 +19,7 @@ random_sites() {
 }
 
 has_index() {
-    curl -sm 7 -A "$UA" "$1" | fgrep 'Index of' >/dev/null
+    wget -t1 -T7 --user-agent "$UA" "$1" -qO- | fgrep 'Index of' >/dev/null
 }
 
 download() {
