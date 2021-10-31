@@ -28,7 +28,8 @@ check() {
 
 download() {
     local uri="${SCHEME}://${1}${T_PATH}"
-    wget -q -e robots=off -r -np -nd -A "${EXTENSIONS}" -P "out/$ip/" "$uri"
+    local out_path="out/$1/"
+    wget -q -e robots=off -r -np -nd -A "${EXTENSIONS}" -P "$out_path" "$uri"
 }
 
 export -f check download
