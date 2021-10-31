@@ -1,25 +1,42 @@
 #!/usr/bin/env bash
+#
+# Download images from random wordpress sites
 
-readonly DIR='/wp-content/uploads/'
+readonly EXTENSIONS='jpg,png,gif,jpeg'
+readonly PARALLEL_SITES_DOWNLOAD=32
+readonly SCAN_WORKERS=1500
+readonly SCHEME='http'
+readonly PORT=80
+readonly UA='Mozilla/5.0'
 
-ip_gen() {
-    nmap -n -iR 1000000 -sL | awk '/report for/ {print $NF}'
+export SCHEME PORT EXTENSIONS UA
+
+random_sites() {
+    nmap -T5 --min-parallelism $SCAN_WORKERS --host-timeout 1s \
+        -n -Pn -iR 0 -p $PORT --open -oG - 2>/dev/null \
+        | awk '/open/{print $2}'
 }
 
-check() {
-    local ip="$1"
-    curl -sA "Mozilla/5.0" -m5 --connect-timeout 1 --max-filesize 20K --tcp-nodelay \
-        "http://$ip$DIR" | fgrep 'Index of' > /dev/null
+has_index() {
+    curl -sm 7 -A "$UA" "$1" | fgrep 'Index of' >/dev/null
 }
 
 download() {
-    local ip="$1"
-    wget -q -e robots=off -r -np -nd \
-        -A jpg,png,gif,jpeg -P "out/$ip/" "http://$ip$DIR"
+    wget -q -e robots=off --user-agent="$UA" -r -np -nd -nc \
+        -Q 200M -A "$EXTENSIONS" -P "$2" "$1"
 }
 
-export -f check
-export -f download
-export DIR
+process() {
+    local ip="$1"
+    local uri="${SCHEME}://${ip}:${PORT}/wp-content/uploads/"
+    local out_path="out/$ip/"
 
-ip_gen | xargs -P 1024 -I {} bash -c 'check {} && echo {} && download {}'
+    if has_index "$uri"; then 
+        echo "$ip"
+        download "$uri" "$out_path"
+    fi
+}
+
+export -f process has_index download
+
+random_sites | xargs -P $PARALLEL_SITES_DOWNLOAD -I {} bash -c 'process {}'
