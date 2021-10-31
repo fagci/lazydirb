@@ -3,10 +3,10 @@
 # Download images from random wordpress sites
 
 readonly EXTENSIONS='jpg,png,gif,jpeg'
-readonly PARALLEL_SITES_DOWNLOAD=32
 readonly SCAN_WORKERS=1500
 readonly SCHEME='http'
 readonly PORT=80
+
 readonly wg='wget -q -e robots=off --user-agent Mozilla/5.0'
 
 export SCHEME PORT EXTENSIONS wg
@@ -23,7 +23,7 @@ has_index() {
 }
 
 download() {
-    $wg -r -np -nd -nc -Q 200M -A "$EXTENSIONS" -P "$2" "$1"
+    $wg -r -np -nd -nc -Q 100M -A "$EXTENSIONS" -P "$2" "$1"
 }
 
 process() {
@@ -36,4 +36,4 @@ process() {
 
 export -f process has_index download
 
-random_sites | xargs -P $PARALLEL_SITES_DOWNLOAD -I {} bash -c 'process {}'
+random_sites | xargs -P 16 -I {} bash -c 'process {}'
