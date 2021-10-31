@@ -11,8 +11,9 @@ readonly UA='Mozilla/5.0'
 
 export SCHEME PORT EXTENSIONS UA
 
+
 random_sites() {
-    nmap -T5 --min-parallelism $SCAN_WORKERS --host-timeout 1s \
+    nmap -T5 --min-parallelism $SCAN_WORKERS \
         -n -Pn -iR 0 -p $PORT --open -oG - 2>/dev/null \
         | awk '/open/{print $2}'
 }
@@ -31,10 +32,7 @@ process() {
     local uri="${SCHEME}://${ip}:${PORT}/wp-content/uploads/"
     local out_path="out/$ip/"
 
-    if has_index "$uri"; then 
-        echo "$ip"
-        download "$uri" "$out_path"
-    fi
+    has_index "$uri" && echo "$ip" && download "$uri" "$out_path"
 }
 
 export -f process has_index download
