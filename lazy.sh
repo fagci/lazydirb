@@ -7,9 +7,9 @@ readonly PARALLEL_SITES_DOWNLOAD=32
 readonly SCAN_WORKERS=1500
 readonly SCHEME='http'
 readonly PORT=80
-readonly UA='Mozilla/5.0'
+readonly wg='wget -q -e robots=off --user-agent Mozilla/5.0'
 
-export SCHEME PORT EXTENSIONS UA
+export SCHEME PORT EXTENSIONS wg
 
 
 random_sites() {
@@ -19,12 +19,11 @@ random_sites() {
 }
 
 has_index() {
-    wget -t1 -T7 --user-agent "$UA" "$1" -qO- | fgrep 'Index of' >/dev/null
+    $wg -t1 -T7 "$1" -O- | fgrep 'Index of' >/dev/null
 }
 
 download() {
-    wget -q -e robots=off --user-agent="$UA" -r -np -nd -nc \
-        -Q 200M -A "$EXTENSIONS" -P "$2" "$1"
+    $wg -r -np -nd -nc -Q 200M -A "$EXTENSIONS" -P "$2" "$1"
 }
 
 process() {
