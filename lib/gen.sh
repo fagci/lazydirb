@@ -13,15 +13,15 @@ random_ips() {
 }
 
 random_http() {
-    random_ips T:80
+    random_ips T:80 $@
 }
 
 random_https() {
-    random_ips T:443
+    random_ips T:443 $@
 }
 
 random_ftp() {
-    random_ips T:21
+    random_ips T:21 $@
 }
 
 export random_ips random_ftp random_http random_https
