@@ -22,4 +22,4 @@ process() {
 
 export -f process
 
-random_ips T:21 | xargs -P 16 -I {} bash -c 'process {}'
+random_ftp | xargs -P 16 -I {} bash -c 'process {}'

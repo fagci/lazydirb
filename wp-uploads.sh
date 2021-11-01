@@ -17,4 +17,4 @@ process() {
 
 export -f process
 
-random_ips 80 | xargs -P 16 -I {} bash -c 'process {}'
+random_http | xargs -P 16 -I {} bash -c 'process {}'
