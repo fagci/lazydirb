@@ -13,6 +13,7 @@ process() {
     local uri="http://${ip}/"
 
     srv=$(wg -S --spider -O /dev/null 2>&1 "$uri" | awk '/Server:/{for(i=2;i<=NF;++i)print $i}' | xargs)
+
     if [ ! -z "$srv" ]; then
         echo "${ip} ${srv}"
     fi
