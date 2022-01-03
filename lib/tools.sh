@@ -11,7 +11,7 @@ download_recursive() {
 }
 
 has_index() {
-    wg -t1 -T7 "$1" -O- | grep -F 'Index of' >/dev/null
+    wg -t1 -T7 "$1" -O- | grep -Fq 'Index of'
 }
 
 export -f wg has_index download_recursive

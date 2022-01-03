@@ -7,7 +7,7 @@ random_ips() {
         exit 255
     fi
 
-    nmap -T5 --min-parallelism "$workers"  --max-hostgroup 1024 --max-retries 1 \
+    nmap -T5 --min-parallelism "$workers" --max-hostgroup 1024 --max-retries 1 \
         --host-timeout 2s -n -Pn -iR 0 -p "$port" --open -oG - 2>/dev/null \
         | awk '/open/{print $2}'
 }
