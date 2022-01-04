@@ -6,10 +6,9 @@
 source ./lib/gen.sh
 
 dl(){
-    ffmpeg -loglevel error \
+    timeout 15 ffmpeg -loglevel error \
         -y -rtsp_transport tcp -i "$1" \
-        -frames:v 1 -r 1 \
-        -stimeout 20000000 \
+        -pix_fmt yuvj422p -deinterlace -an -t 1 -r 1 \
         "$2" 2>&1
 }
 
@@ -17,20 +16,18 @@ process_path() {
     local ip="$1"
     local path="$2"
 
-    local uri="rtsp://${ip}:554${path}"
-    local out_path="out/rtsp/${ip}_${path/\//_}.png"
+    local uri="rtsp://${ip}${path}"
+    local out_path="out/rtsp/${ip}${path/\//_}.png"
 
-    echo "[*] ${ip}${path}"
     local err="$(dl "$uri" "$out_path")"
 
-    grep -qF ' 401 ' <<< "$err" && echo "401 ${ip}" && exit 255
+    # auth required, skip host
+    grep -qF ' 401 ' <<< "$err" && exit 255
 
-    if [[ -z "${err}" ]]; then
-        echo "[+] ${ip}${path}"
-        exit 255
-    fi
+    # got no error (probably ok), stop host fuzzing
+    [[ -z "${err}" ]] && echo "[+] ${uri}" && exit 255
 
-    echo "${err}"
+    # echo "${err}"
 }
 
 process_ip() {
@@ -42,4 +39,4 @@ export -f process_path process_ip dl
 
 mkdir -p ./out/rtsp/
 
-random_rtsp | xargs -P 128 -I {} bash -c 'process_ip {}'
+random_rtsp | xargs -P 256 -I {} bash -c 'process_ip {}'
