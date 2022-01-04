@@ -24,6 +24,10 @@ random_ftp() {
     random_ips T:21 $@
 }
 
+random_rtsp() {
+    random_ips T:554 $@
+}
+
 export random_ips random_ftp random_http random_https
 
 # vi: ft=bash
