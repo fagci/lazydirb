@@ -13,7 +13,7 @@ process() {
 
     local contents=$(curl -s "$uri")
 
-    if [ ! -z "$contents" ]; then
+    if [ -n "$contents" ]; then
         info "$ip"
         echo "$contents"
         download_recursive "$uri" 'jpg,png,gif,jpeg' "$out_path"
@@ -22,4 +22,4 @@ process() {
 
 export -f process
 
-random_ftp | xargs -P 16 -I {} bash -c 'process {}'
+random_ftp | xargs -P 32 -I @ bash -c 'process @'
