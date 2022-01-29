@@ -3,7 +3,9 @@
 # Download images from random open rtsp cameras
 # status: beta
 
-source ./lib/gen.sh
+DIR="$(dirname "$0")"
+
+source "$DIR"/lib/gen.sh
 
 dl(){
     timeout 15 ffmpeg -loglevel error \
@@ -32,7 +34,7 @@ process_path() {
 
 process_ip() {
     local ip="$1"
-    xargs -a ./rtsp.txt -P 1 -I {} bash -c "process_path ${ip} {}" 2>/dev/null
+    xargs -a "$DIR"/data/rtsp.txt -P 1 -I {} bash -c "process_path ${ip} {}" 2>/dev/null
 }
 
 export -f process_path process_ip dl

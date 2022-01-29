@@ -2,15 +2,17 @@
 #
 # Download images from random sites
 
-source ./lib/gen.sh
-source ./lib/tools.sh
+DIR="$(dirname "$0")"
+
+source "$DIR"/lib/gen.sh
+source "$DIR"/lib/tools.sh
 
 process_path() {
     local ip="$1"
     local path="$2"
 
     local uri="http://${ip}/${path}/"
-    local out_path="out/${path/[/]/_/}/${ip}/"
+    local out_path="./out/${path/[/]/_/}/${ip}/"
 
     has_index "$uri" \
         && echo "${ip}: ${path}" \
@@ -19,7 +21,7 @@ process_path() {
 
 process_ip() {
     local ip="$1"
-    xargs -a ./pubdirs.txt -P 2 -I {} bash -c "process_path ${ip} {}"
+    xargs -a "$DIR"/data/pubdirs.txt -P 2 -I {} bash -c "process_path ${ip} {}"
 }
 
 export -f process_ip
